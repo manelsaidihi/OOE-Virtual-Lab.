@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission 5: The Peephole | Spy × Family</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a1a;font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;user-select:none;}
+#navBar{position:fixed;top:0;left:0;right:0;height:44px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-bottom:2px solid #e94560;display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:300;box-shadow:0 2px 25px rgba(233,69,96,0.5);}
+.nav-title{font-family:'Bangers',cursive;font-size:19px;color:#fff;letter-spacing:2px;text-shadow:0 0 12px rgba(233,69,96,0.9);}
+.nav-track{font-family:'Bangers',cursive;font-size:14px;color:#e94560;}
+.nav-status{font-size:11px;color:#aaa;font-weight:700;}
+.screen{position:fixed;top:44px;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.5s;overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;}
+
+/* INTRO */
+#introScreen{background:radial-gradient(ellipse at 50% 55%,#1a1a3e 0%,#0a0a1a 70%);}
+.stars-bg{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 3s infinite;}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:1}}
+.intro-inner{display:flex;flex-direction:column;align-items:center;gap:7px;z-index:2;padding:6px 16px;max-height:calc(100vh - 44px);overflow:hidden;width:100%;max-width:720px;}
+.intro-title{font-family:'Bangers',cursive;font-size:clamp(24px,4vw,50px);color:#fff;text-align:center;letter-spacing:3px;line-height:1.05;animation:pglow 2s infinite;}
+@keyframes pglow{0%,100%{text-shadow:0 0 15px #e94560,0 0 30px #e94560}50%{text-shadow:0 0 40px #e94560,0 0 80px #e94560,0 0 120px #ff6b35}}
+.intro-sub{font-size:clamp(9px,1.2vw,12px);color:#888;letter-spacing:3px;text-transform:uppercase;}
+.chars-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(18px,5vw,65px);margin:3px 0;}
+.char-card{display:flex;flex-direction:column;align-items:center;animation:float 3s ease-in-out infinite;}
+.char-card:nth-child(3){animation-delay:1.5s;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.char-name{font-family:'Bangers',cursive;font-size:clamp(12px,1.7vw,17px);color:#fff;letter-spacing:2px;margin-top:3px;}
+.char-role{font-size:clamp(8px,1vw,11px);color:#888;}
+.chibi-svg{width:clamp(60px,8.5vw,95px);height:auto;}
+.vs-text{font-family:'Bangers',cursive;font-size:clamp(20px,3.2vw,36px);color:#e94560;text-shadow:0 0 15px #e94560;padding-bottom:16px;}
+.mission-desc{font-size:clamp(10px,1.2vw,13px);color:#ccc;text-align:center;max-width:460px;line-height:1.5;padding:0 12px;}
+.mission-desc span{color:#e94560;font-weight:900;}
+.controls-guide{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:6px 16px;}
+.ctrl-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#999;}
+.key-badge{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);border-radius:5px;padding:2px 6px;font-family:'Bangers',cursive;font-size:11px;color:#fff;}
+.btn-start{font-family:'Bangers',cursive;font-size:clamp(17px,2.4vw,25px);letter-spacing:3px;padding:10px 44px;background:linear-gradient(135deg,#e94560,#c0392b);color:#fff;border:none;border-radius:50px;cursor:pointer;animation:bpulse 1.5s infinite;transition:all .2s;}
+@keyframes bpulse{0%,100%{box-shadow:0 0 18px rgba(233,69,96,.5);transform:scale(1)}50%{box-shadow:0 0 38px rgba(233,69,96,.9);transform:scale(1.03)}}
+.btn-start:hover{transform:scale(1.08)!important;}
+
+/* GAME */
+#gameScreen{background:#0a0a14;}
+#gameCanvas{display:block;}
+
+/* ON-SCREEN BUTTONS - side by side */
+#onScreenBtns{position:fixed;bottom:46px;left:0;right:0;display:flex;align-items:flex-end;justify-content:space-between;padding:0 14px 5px;z-index:200;pointer-events:none;}
+.btn-grp{display:flex;gap:7px;pointer-events:all;align-items:flex-end;}
+.gbtn{width:60px;height:60px;background:rgba(12,12,32,0.9);border:2.5px solid rgba(255,255,255,0.18);border-radius:14px;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:none;transition:all .1s;box-shadow:0 4px 16px rgba(0,0,0,0.65),inset 0 1px 0 rgba(255,255,255,0.07);-webkit-tap-highlight-color:transparent;flex-direction:column;gap:2px;}
+.gbtn span.lbl{font-size:8px;color:rgba(255,255,255,0.45);letter-spacing:.5px;font-family:'Nunito',sans-serif;font-weight:700;}
+.gbtn.wide{width:110px;height:50px;font-size:13px;}
+.gbtn:active,.gbtn.pressed{background:rgba(233,69,96,0.45);border-color:#e94560;transform:scale(0.9);box-shadow:0 0 18px rgba(233,69,96,0.5);}
+.gbtn.blue-btn{border-color:rgba(100,180,255,0.35);}
+.gbtn.blue-btn:active,.gbtn.blue-btn.pressed{background:rgba(50,130,230,0.45);border-color:#4a90d9;box-shadow:0 0 18px rgba(74,144,217,0.5);}
+.gbtn.green-btn{border-color:rgba(50,200,100,0.35);}
+.gbtn.green-btn:active,.gbtn.green-btn.pressed{background:rgba(40,180,80,0.45);border-color:#2ecc71;box-shadow:0 0 18px rgba(46,204,113,0.5);}
+
+/* Physics bar */
+#physicsBar{position:fixed;bottom:0;left:0;right:0;height:44px;background:linear-gradient(135deg,#10102a,#0c0c22);border-top:2px solid rgba(233,69,96,0.5);display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,32px);z-index:150;padding:0 8px;}
+.pfact{font-size:clamp(9px,1.1vw,12px);color:#777;display:flex;align-items:center;gap:4px;}
+.pfact strong{color:#e94560;}
+
+/* WIN */
+#winScreen{background:radial-gradient(ellipse at center,#0d2818 0%,#0a0a1a 70%);}
+.win-title{font-family:'Bangers',cursive;font-size:clamp(36px,6vw,80px);color:#2ecc71;letter-spacing:5px;animation:wpulse 1s infinite;z-index:2;text-align:center;}
+@keyframes wpulse{0%,100%{text-shadow:0 0 20px #2ecc71}50%{text-shadow:0 0 55px #2ecc71,0 0 110px #27ae60}}
+.win-sub{font-family:'Bangers',cursive;font-size:19px;color:#f39c12;letter-spacing:3px;margin:5px 0;z-index:2;}
+.sfacts{background:rgba(255,255,255,0.05);border:1px solid rgba(46,204,113,0.3);border-radius:14px;padding:18px 32px;margin:14px 0;z-index:2;max-width:520px;width:90%;}
+.sfact{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#ccc;font-size:13px;line-height:1.4;}
+.sfact:last-child{border-bottom:none;}
+.btn-exit{font-family:'Bangers',cursive;font-size:21px;letter-spacing:2px;padding:11px 42px;background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border:none;border-radius:50px;cursor:pointer;z-index:2;box-shadow:0 0 18px rgba(46,204,113,0.5);transition:all .2s;margin-top:6px;}
+.btn-exit:hover{transform:scale(1.05);}
+
+/* LOSE */
+#loseScreen{background:radial-gradient(ellipse at center,#2a0808 0%,#0a0a1a 70%);}
+.lose-title{font-family:'Bangers',cursive;font-size:clamp(36px,6vw,80px);color:#e94560;letter-spacing:5px;animation:lpulse 0.5s infinite;z-index:2;text-align:center;}
+@keyframes lpulse{0%,100%{text-shadow:0 0 20px #e94560}50%{text-shadow:0 0 55px #e94560,0 0 110px #c0392b}}
+
+/* Particles */
+.particle{position:fixed;pointer-events:none;z-index:1;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* Floating emoji effects */
+.float-emoji{position:fixed;pointer-events:none;z-index:250;font-size:28px;animation:floatUp 1.5s ease-out forwards;}
+@keyframes floatUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-120px) scale(1.5);opacity:0}}
+
+/* Scanline effect on game */
+#scanlines{position:fixed;top:44px;left:0;right:0;bottom:44px;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:10;}
+</style>
+</head>
+<body>
+
+<div id="navBar">
+  <div class="nav-title">🔬 Geometrical & wave Optics</div>
+  <div class="nav-track">TRACK 5 — THE PEEPHOLE</div>
+  <div class="nav-status" id="navStatus">READY</div>
+</div>
+
+<!-- INTRO -->
+<div class="screen active" id="introScreen">
+  <div class="stars-bg" id="starsContainer"></div>
+  <div class="intro-inner">
+    <div class="intro-title">MISSION 5<br>THE PEEPHOLE</div>
+    <div class="intro-sub">🔬 Diverging Lens · Physics Escape Game</div>
+    <div class="chars-row">
+      <div class="char-card">
+        <svg class="chibi-svg" viewBox="0 0 120 150">
+          <rect x="35" y="80" width="50" height="45" rx="10" fill="#3d5a3e"/>
+          <rect x="45" y="85" width="30" height="35" rx="5" fill="#c8c8b0"/>
+          <rect x="18" y="80" width="18" height="35" rx="8" fill="#3d5a3e"/><rect x="84" y="80" width="18" height="35" rx="8" fill="#3d5a3e"/>
+          <circle cx="27" cy="116" r="9" fill="#f5d5b0"/><circle cx="93" cy="116" r="9" fill="#f5d5b0"/>
+          <rect x="38" y="120" width="18" height="25" rx="5" fill="#2c2c2c"/><rect x="64" y="120" width="18" height="25" rx="5" fill="#2c2c2c"/>
+          <ellipse cx="47" cy="146" rx="12" ry="6" fill="#1a1a1a"/><ellipse cx="73" cy="146" rx="12" ry="6" fill="#1a1a1a"/>
+          <ellipse cx="60" cy="52" rx="32" ry="30" fill="#f5d5b0"/>
+          <ellipse cx="60" cy="28" rx="30" ry="16" fill="#c8a850"/><ellipse cx="35" cy="38" rx="12" ry="15" fill="#c8a850"/><ellipse cx="85" cy="38" rx="12" ry="15" fill="#c8a850"/>
+          <ellipse cx="62" cy="16" rx="5" ry="8" fill="#c8a850" transform="rotate(-15,62,16)"/>
+          <ellipse cx="48" cy="54" rx="7" ry="8" fill="#fff"/><ellipse cx="72" cy="54" rx="7" ry="8" fill="#fff"/>
+          <circle cx="49" cy="55" r="5" fill="#4a90d9"/><circle cx="73" cy="55" r="5" fill="#4a90d9"/>
+          <circle cx="50" cy="53" r="2" fill="#1a3a6e"/><circle cx="74" cy="53" r="2" fill="#1a3a6e"/>
+          <circle cx="51" cy="52" r="1" fill="#fff"/><circle cx="75" cy="52" r="1" fill="#fff"/>
+          <rect x="42" y="45" width="13" height="3" rx="1.5" fill="#a08030" transform="rotate(-5,48,46)"/>
+          <rect x="65" y="45" width="13" height="3" rx="1.5" fill="#a08030" transform="rotate(5,71,46)"/>
+          <path d="M53 67 Q60 70 67 67" stroke="#c08070" stroke-width="2" fill="none"/>
+          <circle cx="58" cy="60" r="2" fill="#c08070"/>
+        </svg>
+        <div class="char-name">LOID</div>
+        <div class="char-role">🕵️ The Spy — YOU!</div>
+      </div>
+      <div class="vs-text">VS</div>
+      <div class="char-card">
+        <svg class="chibi-svg" viewBox="0 0 120 150">
+          <rect x="35" y="80" width="50" height="45" rx="10" fill="#2a4a2e"/>
+          <rect x="45" y="85" width="30" height="35" rx="5" fill="#c8c8b0"/>
+          <rect x="18" y="80" width="18" height="35" rx="8" fill="#2a4a2e"/><rect x="84" y="80" width="18" height="35" rx="8" fill="#2a4a2e"/>
+          <circle cx="27" cy="116" r="9" fill="#e8c5a0"/><circle cx="93" cy="116" r="9" fill="#e8c5a0"/>
+          <rect x="38" y="120" width="18" height="25" rx="5" fill="#1a1a1a"/><rect x="64" y="120" width="18" height="25" rx="5" fill="#1a1a1a"/>
+          <ellipse cx="47" cy="146" rx="12" ry="6" fill="#111"/><ellipse cx="73" cy="146" rx="12" ry="6" fill="#111"/>
+          <ellipse cx="60" cy="52" rx="32" ry="30" fill="#e8c5a0"/>
+          <ellipse cx="60" cy="30" rx="30" ry="20" fill="#1a1a1a"/><rect x="28" y="30" width="64" height="18" fill="#1a1a1a"/>
+          <ellipse cx="60" cy="48" rx="32" ry="8" fill="#1a1a1a"/>
+          <rect x="28" y="30" width="10" height="30" rx="5" fill="#1a1a1a"/><rect x="82" y="30" width="10" height="30" rx="5" fill="#1a1a1a"/>
+          <ellipse cx="48" cy="54" rx="7" ry="8" fill="#fff"/><ellipse cx="72" cy="54" rx="7" ry="8" fill="#fff"/>
+          <circle cx="49" cy="55" r="5" fill="#cc2222"/><circle cx="73" cy="55" r="5" fill="#cc2222"/>
+          <circle cx="50" cy="53" r="2" fill="#8b0000"/><circle cx="74" cy="53" r="2" fill="#8b0000"/>
+          <circle cx="51" cy="52" r="1" fill="#fff"/><circle cx="75" cy="52" r="1" fill="#fff"/>
+          <rect x="41" y="44" width="15" height="3.5" rx="1.5" fill="#111" transform="rotate(10,48,45)"/>
+          <rect x="64" y="44" width="15" height="3.5" rx="1.5" fill="#111" transform="rotate(-10,71,45)"/>
+          <path d="M52 68 Q60 64 68 68" stroke="#c08070" stroke-width="2.5" fill="none"/>
+          <ellipse cx="40" cy="62" rx="8" ry="4" fill="#ffaaaa" opacity="0.5"/><ellipse cx="80" cy="62" rx="8" ry="4" fill="#ffaaaa" opacity="0.5"/>
+        </svg>
+        <div class="char-name">YURI</div>
+        <div class="char-role">👮 The Guard</div>
+      </div>
+    </div>
+    <div class="mission-desc">Loid is trapped! Use the <span>peephole's diverging lens</span> to spy on Yuri.<br>When corridor is clear — run to the <span>EXIT</span>! Don't get caught! 😱</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;background:rgba(233,69,96,0.07);border:1px solid rgba(233,69,96,0.25);border-radius:10px;padding:8px 14px;">
+      <div style="font-family:'Bangers',cursive;font-size:10px;letter-spacing:2px;color:#e94560;width:100%;text-align:center;margin-bottom:3px;">📐 LENS DATA — f&#39; = −10 cm</div>
+      <div style="font-size:10px;color:#aaa;font-weight:700;">P = <span style="color:#e94560;">−10 D</span></div>
+      <div style="font-size:10px;color:#555;">|</div>
+      <div style="font-size:10px;color:#aaa;font-weight:700;">OA = <span style="color:#f39c12;">−50 cm</span></div>
+      <div style="font-size:10px;color:#555;">|</div>
+      <div style="font-size:10px;color:#aaa;font-weight:700;">OA&#39; = <span style="color:#e94560;">−8.33 cm</span> (virtual)</div>
+      <div style="font-size:10px;color:#555;">|</div>
+      <div style="font-size:10px;color:#aaa;font-weight:700;">M = <span style="color:#2ecc71;">+0.167</span> → 6× smaller</div>
+      <div style="font-size:10px;color:#555;">|</div>
+      <div style="font-size:10px;color:#aaa;font-weight:700;">A&#39;B&#39; = <span style="color:#2ecc71;">30 cm</span></div>
+    </div>
+    <div class="controls-guide">
+      <div class="ctrl-item"><span class="key-badge">A</span><span class="key-badge">D</span> Move</div>
+      <div class="ctrl-item"><span class="key-badge">P</span> Peek 👁</div>
+      <div class="ctrl-item"><span class="key-badge">SPC</span> Hide 📦</div>
+      <div class="ctrl-item">or use on-screen buttons</div>
+    </div>
+    <button class="btn-start" onclick="startGame()">▶ START MISSION</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="gameScreen">
+  <canvas id="gameCanvas"></canvas>
+  <div id="scanlines"></div>
+  <div id="physicsBar">
+    <div class="pfact">🔬 Diverging lens → <strong>smaller virtual image</strong></div>
+    <div class="pfact">👁 Smaller image = <strong>wider field of view</strong></div>
+    <div class="pfact">🚪 That's why doors have <strong>peepholes!</strong></div>
+  </div>
+  <!-- On-screen buttons: all side by side -->
+  <div id="onScreenBtns">
+    <div class="btn-grp">
+      <div class="gbtn" id="btnLeft">◀<span class="lbl">LEFT</span></div>
+      <div class="gbtn" id="btnRight">▶<span class="lbl">RIGHT</span></div>
+    </div>
+    <div class="btn-grp">
+      <div class="gbtn blue-btn" id="btnPeek">👁<span class="lbl">PEEK</span></div>
+      <div class="gbtn green-btn" id="btnHide">📦<span class="lbl">HIDE</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- WIN -->
+<div class="screen" id="winScreen">
+  <div class="win-title">MISSION<br>COMPLETE!</div>
+  <div class="win-sub">🎉 Loid escaped! Physics saves the day! 🎉</div>
+  <div class="sfacts">
+    <div class="sfact">📐 <strong style="color:#f39c12;">f' = −10 cm</strong> → P = <strong style="color:#e94560;">−10 D</strong> (diverging lens, negative power)</div>
+    <div class="sfact">📍 Image position: OA' = <strong style="color:#e94560;">−8.33 cm</strong> — negative → <strong style="color:#2ecc71;">VIRTUAL</strong> (same side as object, cannot be projected on a screen)</div>
+    <div class="sfact">🔍 Magnification: M = OA'/OA = <strong style="color:#2ecc71;">+0.167</strong> → erect &amp; <strong style="color:#2ecc71;">~6× smaller</strong></div>
+    <div class="sfact">📏 Guard's image height: A'B' = 0.167 × 1.80 m = <strong style="color:#2ecc71;">30 cm</strong> (real guard = 1.80 m)</div>
+    <div class="sfact">👁 Smaller image = <strong style="color:#2ecc71;">wider field of view</strong> — that's why peepholes use diverging lenses!</div>
+  </div>
+  <button class="btn-exit" onclick="startGame()">🔄 PLAY AGAIN</button>
+  <button class="btn-exit" style="margin-top:8px;background:rgba(255,255,255,0.08);box-shadow:none;" onclick="exitToIntro()">🏠 MENU</button>
+</div>
+
+<!-- LOSE -->
+<div class="screen" id="loseScreen">
+  <div class="lose-title" id="loseTitle">CAUGHT!</div>
+  <div id="loseSub" style="font-family:'Bangers',cursive;font-size:22px;color:#f39c12;letter-spacing:2px;margin:10px 0;z-index:2;text-align:center;"></div>
+  <div style="font-size:13px;color:#aaa;margin:8px 0 18px;z-index:2;text-align:center;max-width:380px;padding:0 16px;">💡 Tip: <span style="color:#e94560;font-weight:900;">Peek first</span> through the peephole to locate Yuri, then run when the coast is clear!</div>
+  <button class="btn-exit" style="background:linear-gradient(135deg,#e94560,#c0392b);box-shadow:0 0 18px rgba(233,69,96,.5);" onclick="startGame()">🔄 TRY AGAIN</button>
+  <button class="btn-exit" style="margin-top:8px;background:rgba(255,255,255,0.08);box-shadow:none;" onclick="exitToIntro()">🏠 MENU</button>
+</div>
+
+<script>
+// ============================================================
+// AUDIO
+// ============================================================
+let AC=null;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC;}
+function tone(f,dur,type='sine',vol=0.25,startF,endF){
+  try{const a=getAC(),o=a.createOscillator(),g=a.createGain();
+  o.connect(g);g.connect(a.destination);o.type=type;
+  o.frequency.setValueAtTime(startF||f,a.currentTime);
+  if(endF)o.frequency.exponentialRampToValueAtTime(endF,a.currentTime+dur);
+  g.gain.setValueAtTime(vol,a.currentTime);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+dur);
+  o.start();o.stop(a.currentTime+dur);}catch(e){}
+}
+function sndClick(){tone(700,0.08,'square',0.18);}
+function sndStep(){tone(120,0.09,'square',0.1,120,70);}
+function sndDoor(){tone(180,0.45,'sawtooth',0.2,200,70);}
+function sndHide(){tone(400,0.15,'square',0.22);}
+function sndCatch(){
+  [300,250,200,150].forEach((f,i)=>{setTimeout(()=>tone(f,0.18,'sawtooth',0.3),i*80);});
+}
+function sndPeek(){tone(900,0.07,'sine',0.18);}
+function sndWin(){
+  [523,659,784,1047,1318].forEach((f,i)=>{setTimeout(()=>tone(f,0.25,'sine',0.28),i*110);});
+}
+function sndSneeze(){
+  tone(600,0.05,'sine',0.15);
+  setTimeout(()=>tone(200,0.3,'sawtooth',0.2,200,80),60);
+}
+function sndBox(){tone(150,0.2,'square',0.2,150,90);}
+
+// ============================================================
+// STARS
+// ============================================================
+(function(){
+  const c=document.getElementById('starsContainer');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*2.5+0.5;
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;animation-delay:${Math.random()*3}s`;
+    c.appendChild(s);
+  }
+})();
+
+// ============================================================
+// SCREENS
+// ============================================================
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function setStatus(t){document.getElementById('navStatus').textContent=t;}
+
+// ============================================================
+// CANVAS
+// ============================================================
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+let W,H;
+const NAV_H=44,PHYS_H=44,BTN_H=70;
+
+function resize(){
+  W=window.innerWidth;
+  H=window.innerHeight-NAV_H-PHYS_H;
+  canvas.width=W;canvas.height=H;
+}
+
+// ============================================================
+// GAME VARS
+// ============================================================
+let running=false,phase='playing',rafId=null;
+
+// Camera / scroll
+let camX=0; // horizontal scroll offset
+const WORLD_W_MULT=3.2; // corridor is 3.2x screen wide
+let worldW=0;
+
+// Player
+const P={
+  x:0,y:0,w:44,h:64,
+  vx:0,speed:3.8,
+  inCorridor:false,
+  hiding:false,hideTimer:0,
+  facingR:true,
+  walkFrame:0,walkTimer:0,
+};
+
+// Door
+const DOOR={x:0,y:0,w:0,h:0,open:false,prog:0};
+
+// Yuri
+const Y={
+  x:0,y:0,
+  dir:1,speed:1.6,
+  patL:0,patR:0,
+  sneezing:false,sneezeT:0,sneezeInt:0,
+  dancing:false,danceT:0,
+  visionR:100,
+};
+
+// Exit
+const EXIT={x:0,y:0,w:55,h:0};
+
+// Boxes (world coords)
+let boxes=[];
+
+// Peephole
+let peekActive=false;
+// Lens distortion canvas for real fisheye
+let lensCanvas=null,lensCtx=null;
+
+// Message
+let msg={text:'',alpha:0,timer:0,color:'#fff'};
+function showMsg(t,ms=2200,col='#fff'){msg.text=t;msg.alpha=1;msg.timer=ms;msg.color=col;}
+
+// Funny scenarios
+const FUNNY=[
+  {text:"🤧 Yuri sneezes! Eyes closed — RUN!!",action:'sneeze'},
+  {text:"📱 Yuri's phone rings! He's distracted!",action:'distract'},
+  {text:"🪞 Yuri sees himself in the mirror... posing! 💃",action:'dance'},
+  {text:"🍩 Yuri dropped his donut! He's picking it up!",action:'bend'},
+];
+let nextFunny=0,funnyTimer=0,funnyInterval=9000;
+
+// Flag
+let flagWave=0,showFlag=false;
+// Confetti
+let confetti=[];
+// Particles (sparks, dust)
+let particles=[];
+// Floating emojis
+let floatEmojis=[];
+// Win timer
+let winTimer=0;
+
+// Keys
+const keys={};
+let tLeft=false,tRight=false,tPeek=false,tHide=false;
+
+// Footstep
+let stepT=0,pStepT=0;
+
+// Funny scenarios state
+let funnyActive=false,funnyState='',funnyDur=0;
+
+// ============================================================
+// INIT
+// ============================================================
+function initGame(){
+  resize();
+  worldW=W*WORLD_W_MULT;
+
+  DOOR.x=W*0.2;DOOR.y=H*0.1;DOOR.w=W*0.1;DOOR.h=H*0.72;
+  DOOR.open=false;DOOR.prog=0;
+
+  EXIT.x=worldW-90;EXIT.y=H*0.1;EXIT.w=58;EXIT.h=H*0.72;
+
+  Y.patL=DOOR.x+DOOR.w+50;
+  Y.patR=worldW-130;
+  Y.x=Y.patL+(Y.patR-Y.patL)*0.55;
+  Y.y=H*0.4;
+  Y.dir=1;Y.speed=1.6;Y.sneezing=false;Y.dancing=false;Y.sneezeT=0;
+  Y.sneezeInt=8000+Math.random()*5000;
+
+  P.x=DOOR.x-60;P.y=H*0.4;
+  P.inCorridor=false;P.hiding=false;P.hideTimer=0;
+  P.vx=0;P.facingR=true;P.walkFrame=0;P.walkTimer=0;
+
+  boxes=[
+    {x:DOOR.x+DOOR.w+W*0.18,y:H*0.6,w:54,h:50},
+    {x:DOOR.x+DOOR.w+W*0.55,y:H*0.6,w:54,h:50},
+    {x:DOOR.x+DOOR.w+W*1.1,y:H*0.6,w:54,h:50},
+    {x:DOOR.x+DOOR.w+W*1.65,y:H*0.6,w:54,h:50},
+    {x:DOOR.x+DOOR.w+W*2.1,y:H*0.6,w:54,h:50},
+  ];
+
+  camX=0;peekActive=false;
+  showFlag=false;winTimer=0;flagWave=0;
+  confetti=[];particles=[];floatEmojis=[];
+  phase='playing';running=true;
+  funnyActive=false;funnyTimer=funnyInterval;nextFunny=0;
+  stepT=0;pStepT=0;
+
+  // Build lens canvas for real fisheye
+  const lr=Math.min(W,H)*0.22;
+  lensCanvas=document.createElement('canvas');
+  lensCanvas.width=lensCanvas.height=lr*2;
+  lensCtx=lensCanvas.getContext('2d');
+
+  showMsg('👁 Press P or tap PEEK to look through the peephole!',3000,'#7ecfff');
+  setStatus('🔍 PEEK FIRST');
+}
+
+// ============================================================
+// FUNNY SCENARIOS
+// ============================================================
+function triggerFunny(){
+  if(funnyActive||!P.inCorridor) return;
+  const sc=FUNNY[nextFunny%FUNNY.length];nextFunny++;
+  funnyActive=true;
+  funnyState=sc.action;
+  funnyDur=sc.action==='sneeze'?2000:sc.action==='distract'?3000:sc.action==='dance'?2500:1800;
+
+  if(sc.action==='sneeze'){Y.sneezing=true;Y.sneezeT=funnyDur;sndSneeze();spawnEmoji('🤧',Y.x-camX,Y.y);}
+  else if(sc.action==='dance'){Y.dancing=true;Y.danceT=funnyDur;spawnEmoji('💃',Y.x-camX,Y.y);}
+  else if(sc.action==='distract'){Y.sneezing=true;Y.sneezeT=funnyDur;spawnEmoji('📱',Y.x-camX,Y.y);}
+  else if(sc.action==='bend'){Y.sneezing=true;Y.sneezeT=funnyDur;spawnEmoji('🍩',Y.x-camX,Y.y);}
+
+  showMsg(sc.text,funnyDur-200,'#f39c12');
+  setTimeout(()=>{
+    funnyActive=false;Y.sneezing=false;Y.dancing=false;
+    funnyTimer=funnyInterval+Math.random()*4000;
+  },funnyDur);
+}
+
+function spawnEmoji(e,x,y){
+  const el=document.createElement('div');
+  el.className='float-emoji';el.textContent=e;
+  el.style.cssText=`left:${x-20}px;top:${NAV_H+y-60}px;`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1600);
+}
+
+// ============================================================
+// FISHEYE LENS (real distortion)
+// ============================================================
+function drawFisheyeLens(){
+  if(!peekActive) return;
+
+  const px=DOOR.x+DOOR.w/2;
+  const py=DOOR.y+DOOR.h*0.33;
+  const R=Math.min(W,H)*0.22; // radius of peephole view
+
+  // --- render corridor scene into offscreen canvas ---
+  const lc=lensCanvas;const lx2=lc.width/2,ly2=lc.height/2;
+  lensCtx.clearRect(0,0,lc.width,lc.height);
+
+  // Background corridor (wide angle view = 2.5x wider than normal)
+  lensCtx.fillStyle='#181828';lensCtx.fillRect(0,0,lc.width,lc.height);
+
+  // Floor
+  lensCtx.fillStyle='#202032';lensCtx.fillRect(0,lc.height*0.62,lc.width,lc.height*0.38);
+  // Ceiling
+  lensCtx.fillStyle='#0e0e1e';lensCtx.fillRect(0,0,lc.width,lc.height*0.08);
+
+  // Baseboard
+  lensCtx.fillStyle='#2a2a3a';lensCtx.fillRect(0,lc.height*0.62,lc.width,3);
+
+  // Lamp glow
+  const lg2=lensCtx.createRadialGradient(lc.width*0.5,0,0,lc.width*0.5,0,lc.height*0.7);
+  lg2.addColorStop(0,'rgba(255,220,150,0.2)');lg2.addColorStop(1,'transparent');
+  lensCtx.fillStyle=lg2;lensCtx.fillRect(0,0,lc.width,lc.height);
+
+  // Draw boxes seen through lens (small + fisheye positions)
+  const corrW=worldW-(DOOR.x+DOOR.w);
+  boxes.forEach(b=>{
+    const relX=(b.x-(DOOR.x+DOOR.w))/corrW;
+    const lensX=lc.width*(0.05+relX*0.9);
+    const bScale=0.28; // proportional to yuriScale for consistent lens view
+    lensCtx.save();
+    lensCtx.translate(lensX,lc.height*0.62-b.h*bScale+4);
+    lensCtx.scale(bScale,bScale);
+    drawBoxOnCtx(lensCtx,0,0,b.w,b.h);
+    lensCtx.restore();
+  });
+
+  // Draw Yuri in lens — SMALL (diverging lens physics!)
+  const yuriRelX=(Y.x-(DOOR.x+DOOR.w))/corrW;
+  const yuriLensX=lc.width*(0.05+yuriRelX*0.9);
+  // Physics: M = +0.167 → guard is ~6× smaller through diverging lens
+  // Gameplay scale 0.28 ensures Yuri remains visible in the small lens canvas (~264px)
+  // The M=+0.167 value is displayed correctly in all UI labels and win screen
+  const yuriScale=0.28;
+  lensCtx.save();
+  lensCtx.translate(yuriLensX,lc.height*0.6);
+  lensCtx.scale(yuriScale,yuriScale);
+  drawYuriOnCtx(lensCtx,0,0);
+  lensCtx.restore();
+
+  // Exit visible far right
+  const exitRelX=(EXIT.x-(DOOR.x+DOOR.w))/corrW;
+  const exitLensX=lc.width*(0.05+exitRelX*0.9);
+  lensCtx.fillStyle='#1a3a1a';lensCtx.fillRect(exitLensX-8,lc.height*0.1,22,lc.height*0.52);
+  lensCtx.fillStyle='rgba(46,204,113,0.6)';lensCtx.font='bold 9px Nunito';lensCtx.textAlign='center';
+  lensCtx.fillText('EXIT',exitLensX,lc.height*0.08);
+
+  // --- NOW apply real fisheye distortion using pixel manipulation ---
+  const imgData=lensCtx.getImageData(0,0,lc.width,lc.height);
+  const outData=lensCtx.createImageData(lc.width,lc.height);
+  const d=imgData.data,od=outData.data;
+  const cw=lc.width,ch=lc.height;
+  const strength=0.55; // fisheye strength
+
+  for(let y=0;y<ch;y++){
+    for(let x=0;x<cw;x++){
+      // Normalize to -1..1
+      let nx=(x/cw)*2-1;
+      let ny=(y/ch)*2-1;
+      const r=Math.sqrt(nx*nx+ny*ny);
+      if(r<=1){
+        // Barrel distortion (fisheye)
+        const theta=Math.atan2(ny,nx);
+        const rDist=r*(1+strength*r*r);
+        const sx=((rDist*Math.cos(theta)+1)/2)*cw;
+        const sy=((rDist*Math.sin(theta)+1)/2)*ch;
+        const sx2=Math.floor(sx),sy2=Math.floor(sy);
+        if(sx2>=0&&sx2<cw&&sy2>=0&&sy2<ch){
+          const si=(sy2*cw+sx2)*4;
+          const di=(y*cw+x)*4;
+          od[di]=d[si];od[di+1]=d[si+1];od[di+2]=d[si+2];od[di+3]=d[si+3];
+        }
+      }
+    }
+  }
+  lensCtx.putImageData(outData,0,0);
+
+  // --- Draw the circular peephole onto main canvas ---
+  ctx.save();
+  // Outer rings (peephole frame)
+  ctx.beginPath();ctx.arc(px,py,R+8,0,Math.PI*2);
+  ctx.fillStyle='#111';ctx.fill();
+  ctx.beginPath();ctx.arc(px,py,R+5,0,Math.PI*2);
+  ctx.fillStyle='#333';ctx.fill();
+  ctx.beginPath();ctx.arc(px,py,R+2,0,Math.PI*2);
+  const metalGrad=ctx.createLinearGradient(px-R,py-R,px+R,py+R);
+  metalGrad.addColorStop(0,'#666');metalGrad.addColorStop(0.5,'#999');metalGrad.addColorStop(1,'#555');
+  ctx.fillStyle=metalGrad;ctx.fill();
+
+  // Clip to circle and draw fisheye image
+  ctx.beginPath();ctx.arc(px,py,R,0,Math.PI*2);ctx.clip();
+  ctx.drawImage(lc,px-R,py-R,R*2,R*2);
+
+  // Lens vignette edge
+  const vign=ctx.createRadialGradient(px,py,R*0.5,px,py,R);
+  vign.addColorStop(0,'transparent');
+  vign.addColorStop(0.65,'rgba(0,0,0,0.05)');
+  vign.addColorStop(1,'rgba(0,0,0,0.85)');
+  ctx.fillStyle=vign;ctx.beginPath();ctx.arc(px,py,R,0,Math.PI*2);ctx.fill();
+
+  // Lens glass reflection
+  ctx.fillStyle='rgba(255,255,255,0.07)';
+  ctx.beginPath();ctx.ellipse(px-R*0.22,py-R*0.28,R*0.38,R*0.17,-0.5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.04)';
+  ctx.beginPath();ctx.ellipse(px+R*0.3,py+R*0.3,R*0.15,R*0.07,0.8,0,Math.PI*2);ctx.fill();
+
+  // Blue tint (glass effect)
+  ctx.fillStyle='rgba(100,150,255,0.04)';ctx.beginPath();ctx.arc(px,py,R,0,Math.PI*2);ctx.fill();
+
+  ctx.restore();
+
+  // Label below peephole
+  ctx.save();
+  const lbl='👁 M = +0.167 → Guard appears 6× smaller = Wider field of view!  (OA\'=−8.33cm)';
+  ctx.font='bold 11px Nunito';
+  const lw=ctx.measureText(lbl).width+22;
+  ctx.fillStyle='rgba(0,0,0,0.75)';ctx.fillRect(px-lw/2,py+R+6,lw,22);
+  ctx.fillStyle='#7ecfff';ctx.textAlign='center';ctx.fillText(lbl,px,py+R+21);
+
+  // Comparison callout
+  const callout=`Real size vs lens size: Yuri is ${Math.round(Y.visionR)}px away`;
+  ctx.font='10px Nunito';ctx.fillStyle='rgba(255,200,100,0.75)';
+  ctx.fillText('⚠️ Image is virtual & smaller — lens effect!',px,py+R+36);
+  ctx.restore();
+
+  // Pulsing ring
+  const pulse=0.5+0.5*Math.sin(Date.now()*0.004);
+  ctx.beginPath();ctx.arc(px,py,R+6+pulse*4,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(100,180,255,${0.3+0.3*pulse})`;ctx.lineWidth=2;ctx.stroke();
+}
+
+// ============================================================
+// DRAWING HELPERS (generic ctx)
+// ============================================================
+function drawBoxOnCtx(c,x,y,w,h){
+  c.fillStyle='#c8a050';c.fillRect(x,y,w,h);
+  c.strokeStyle='#8a6020';c.lineWidth=2;c.strokeRect(x,y,w,h);
+  c.strokeStyle='#e0c070';c.lineWidth=2.5;
+  c.beginPath();c.moveTo(x+w/2,y);c.lineTo(x+w/2,y+h);c.stroke();
+  c.beginPath();c.moveTo(x,y+h/2);c.lineTo(x+w,y+h/2);c.stroke();
+}
+
+function drawYuriOnCtx(c,x,y){
+  const t=Date.now();
+  const walk=Math.sin(t*0.008)*9;
+  // Body
+  c.fillStyle='#2a4a2e';c.fillRect(x-17,y-8,34,34);
+  c.fillStyle='#c8c8b0';c.fillRect(x-9,y-3,18,24);
+  // Arms
+  c.fillStyle='#2a4a2e';
+  c.fillRect(x-20,y+2,9,26);c.fillRect(x+11,y+2,9,26);
+  // Legs
+  c.fillStyle='#111';c.fillRect(x-13,y+24,11,22+walk);c.fillRect(x+2,y+24,11,22-walk);
+  c.fillStyle='#0a0a0a';
+  c.beginPath();c.ellipse(x-8,y+48,9,4,0,0,Math.PI*2);c.fill();
+  c.beginPath();c.ellipse(x+8,y+48,9,4,0,0,Math.PI*2);c.fill();
+  // Head
+  c.fillStyle='#e8c5a0';c.beginPath();c.ellipse(x,y-20,20,20,0,0,Math.PI*2);c.fill();
+  // Hair
+  c.fillStyle='#111';c.beginPath();c.arc(x,y-28,21,Math.PI,0);c.fill();
+  c.fillRect(x-21,y-30,42,14);c.fillRect(x-21,y-24,8,14);c.fillRect(x+13,y-24,8,14);
+  // Eyes
+  c.fillStyle='#cc2222';c.beginPath();c.arc(x-7,y-20,5,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(x+7,y-20,5,0,Math.PI*2);c.fill();
+  c.fillStyle='#8b0000';c.beginPath();c.arc(x-6,y-21,2.5,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(x+8,y-21,2.5,0,Math.PI*2);c.fill();
+  c.fillStyle='#fff';c.beginPath();c.arc(x-5,y-22,1,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(x+9,y-22,1,0,Math.PI*2);c.fill();
+}
+
+// ============================================================
+// MAIN DRAW FUNCTIONS
+// ============================================================
+function drawBG(){
+  // Left room (behind door)
+  const rg=ctx.createLinearGradient(0,0,DOOR.x,0);
+  rg.addColorStop(0,'#1a0a05');rg.addColorStop(1,'#130805');
+  ctx.fillStyle=rg;ctx.fillRect(0,0,DOOR.x,H);
+  ctx.fillStyle='#2e1a0a';ctx.fillRect(0,H*0.75,DOOR.x,H*0.25);
+  // Wall texture lines
+  ctx.strokeStyle='rgba(0,0,0,0.15)';ctx.lineWidth=1;
+  for(let i=0;i<H;i+=40){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(DOOR.x,i);ctx.stroke();}
+
+  // Long corridor
+  const corrStartX=DOOR.x+DOOR.w-camX;
+  const corrEndX=worldW-camX;
+  const cg=ctx.createLinearGradient(corrStartX,0,corrEndX,0);
+  cg.addColorStop(0,'#161626');cg.addColorStop(1,'#0e0e1e');
+  ctx.fillStyle=cg;ctx.fillRect(corrStartX,0,corrEndX-corrStartX,H);
+
+  // Corridor floor
+  ctx.fillStyle='#1e1e2e';ctx.fillRect(corrStartX,H*0.75,corrEndX-corrStartX,H*0.25);
+
+  // Floor tiles
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  const tileW=80;
+  for(let tx=corrStartX;tx<corrEndX;tx+=tileW){
+    ctx.beginPath();ctx.moveTo(tx,H*0.75);ctx.lineTo(tx,H);ctx.stroke();
+  }
+  for(let ty=H*0.75;ty<H;ty+=40){
+    ctx.beginPath();ctx.moveTo(corrStartX,ty);ctx.lineTo(corrEndX,ty);ctx.stroke();
+  }
+
+  // Baseboard
+  ctx.fillStyle='#252535';ctx.fillRect(corrStartX,H*0.75,corrEndX-corrStartX,4);
+
+  // Ceiling lamp glow (multiple lamps along corridor)
+  for(let lx=corrStartX+150;lx<corrEndX;lx+=280){
+    const lpg=ctx.createRadialGradient(lx,0,0,lx,0,H*0.7);
+    lpg.addColorStop(0,'rgba(255,220,150,0.1)');lpg.addColorStop(1,'transparent');
+    ctx.fillStyle=lpg;ctx.fillRect(lx-H*0.7,0,H*1.4,H);
+    // Lamp fixture
+    ctx.fillStyle='#ffd080';ctx.fillRect(lx-9,0,18,10);
+    ctx.save();ctx.shadowColor='#ffd080';ctx.shadowBlur=18;
+    ctx.fillStyle='#ffe4a0';ctx.fillRect(lx-7,1,14,7);ctx.restore();
+  }
+
+  // Depth lines on walls (perspective)
+  ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=1;
+  for(let wy=10;wy<H*0.75;wy+=50){
+    ctx.beginPath();ctx.moveTo(corrStartX,wy);ctx.lineTo(corrEndX,wy);ctx.stroke();
+  }
+}
+
+function drawDoor(){
+  ctx.fillStyle='#3a2010';ctx.fillRect(DOOR.x-8,DOOR.y-8,DOOR.w+16,DOOR.h+16);
+  if(DOOR.open&&DOOR.prog>0){
+    ctx.save();ctx.translate(DOOR.x,DOOR.y+DOOR.h);
+    const ang=DOOR.prog*Math.PI*0.5;
+    ctx.transform(Math.cos(ang),0,Math.sin(ang)*0.22,1,0,0);
+    ctx.translate(0,-DOOR.h);drawDoorPanel();ctx.restore();
+  } else {ctx.save();ctx.translate(DOOR.x,DOOR.y);drawDoorPanel();ctx.restore();}
+}
+
+function drawDoorPanel(){
+  const dg=ctx.createLinearGradient(0,0,DOOR.w,0);
+  dg.addColorStop(0,'#7B4E2C');dg.addColorStop(0.5,'#9A6A42');dg.addColorStop(1,'#5B3415');
+  ctx.fillStyle=dg;ctx.fillRect(0,0,DOOR.w,DOOR.h);
+  ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=1;
+  for(let i=0;i<DOOR.h;i+=14){ctx.beginPath();ctx.moveTo(3,i);ctx.lineTo(DOOR.w-3,i+2);ctx.stroke();}
+  ctx.strokeStyle='#4a2810';ctx.lineWidth=2.5;
+  ctx.strokeRect(6,8,DOOR.w-12,DOOR.h*0.43-8);
+  ctx.strokeRect(6,DOOR.h*0.43+4,DOOR.w-12,DOOR.h*0.52-8);
+  // Knob
+  ctx.fillStyle='#d4a820';ctx.beginPath();ctx.arc(DOOR.w-12,DOOR.h*0.5,7,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#b8900f';ctx.lineWidth=1.5;ctx.stroke();
+  // Peephole
+  const px=DOOR.w/2,py=DOOR.h*0.33;
+  ctx.fillStyle='#111';ctx.beginPath();ctx.arc(px,py,9,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#333';ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fill();
+  const lpg=ctx.createRadialGradient(px,py,0,px,py,7);
+  lpg.addColorStop(0,'rgba(100,150,255,0.4)');lpg.addColorStop(1,'rgba(30,50,120,0.3)');
+  ctx.fillStyle=lpg;ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fill();
+}
+
+function drawExitDoor(){
+  const ex=EXIT.x-camX;
+  // Frame
+  ctx.fillStyle='#1a0a00';ctx.fillRect(ex-6,EXIT.y-6,EXIT.w+12,EXIT.h+12);
+  ctx.fillStyle='#4a3010';ctx.fillRect(ex,EXIT.y,EXIT.w,EXIT.h);
+  // Green EXIT sign
+  ctx.fillStyle='#2ecc71';ctx.fillRect(ex-6,EXIT.y-34,EXIT.w+12,26);
+  ctx.fillStyle='#fff';ctx.font='bold 13px Nunito';ctx.textAlign='center';
+  ctx.fillText('EXIT',ex+EXIT.w/2,EXIT.y-16);
+  // Arrow
+  const far=Math.abs(Y.x-(EXIT.x));
+  const glowing=far>W*0.28||Y.sneezing||Y.dancing;
+  ctx.font='bold 24px Nunito';ctx.fillStyle=glowing?'#2ecc71':'#1a7a40';
+  ctx.fillText('→',ex+EXIT.w/2,EXIT.y+EXIT.h/2+9);
+  if(glowing){
+    ctx.save();ctx.shadowColor='#2ecc71';ctx.shadowBlur=18+Math.sin(Date.now()*0.006)*8;
+    ctx.strokeStyle='#2ecc71';ctx.lineWidth=2.5;
+    ctx.strokeRect(ex-3,EXIT.y-3,EXIT.w+6,EXIT.h+6);ctx.restore();
+  }
+}
+
+function drawBoxes(){
+  boxes.forEach(b=>{
+    const bx=b.x-camX;
+    if(bx+b.w<0||bx>W) return;
+    drawBoxOnCtx(ctx,bx,b.y,b.w,b.h);
+    // Hide hint
+    if(!P.hiding&&P.inCorridor&&Math.abs(P.x-b.x)<70){
+      ctx.fillStyle='rgba(0,0,0,0.7)';
+      const ht='SPACE / 📦';const hw=ctx.measureText(ht).width+16;
+      ctx.fillRect(bx+b.w/2-hw/2,b.y-22,hw,18);
+      ctx.fillStyle='#f39c12';ctx.font='bold 10px Nunito';ctx.textAlign='center';
+      ctx.fillText(ht,bx+b.w/2,b.y-9);
+    }
+  });
+}
+
+function drawYuri(){
+  const t=Date.now();
+  const sx=Y.x-camX;
+  if(sx<-60||sx>W+60) return;
+
+  const walk=!Y.sneezing?Math.sin(t*0.009)*9:0;
+  const dance=Y.dancing?Math.sin(t*0.02)*15:0;
+
+  // Shadow
+  ctx.fillStyle='rgba(0,0,0,0.2)';
+  ctx.beginPath();ctx.ellipse(sx,Y.y+56,22+Math.abs(dance)*0.3,5,0,0,Math.PI*2);ctx.fill();
+
+  ctx.save();
+  if(Y.dancing){ctx.translate(sx,Y.y);ctx.rotate(Math.sin(t*0.015)*0.2);ctx.translate(-sx,-Y.y);}
+
+  // Legs
+  ctx.fillStyle='#111';ctx.fillRect(sx-13,Y.y+24,11,22+walk);ctx.fillRect(sx+2,Y.y+24,11,22-walk);
+  ctx.fillStyle='#0a0a0a';ctx.beginPath();ctx.ellipse(sx-8,Y.y+48,9,4,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(sx+8,Y.y+48,9,4,0,0,Math.PI*2);ctx.fill();
+  // Body
+  ctx.fillStyle='#2a4a2e';ctx.fillRect(sx-17,Y.y-8,34,34);
+  ctx.fillStyle='#c8c8b0';ctx.fillRect(sx-9,Y.y-3,18,24);
+  // Arms
+  ctx.fillStyle='#2a4a2e';
+  ctx.save();ctx.translate(sx-20,Y.y+2);ctx.rotate(Math.sin(t*0.007)*0.3+(Y.dancing?Math.sin(t*0.02)*0.5:0));
+  ctx.fillRect(0,0,10,26);ctx.restore();
+  ctx.save();ctx.translate(sx+10,Y.y+2);ctx.rotate(-Math.sin(t*0.007)*0.3-(Y.dancing?Math.sin(t*0.02)*0.5:0));
+  ctx.fillRect(0,0,10,26);ctx.restore();
+  // Head
+  ctx.fillStyle='#e8c5a0';ctx.beginPath();ctx.ellipse(sx,Y.y-20,20,20,0,0,Math.PI*2);ctx.fill();
+  // Hair
+  ctx.fillStyle='#111';ctx.beginPath();ctx.arc(sx,Y.y-28,21,Math.PI,0);ctx.fill();
+  ctx.fillRect(sx-21,Y.y-30,42,14);ctx.fillRect(sx-21,Y.y-24,8,14);ctx.fillRect(sx+13,Y.y-24,8,14);
+
+  if(Y.sneezing){
+    // Eyes closed
+    ctx.strokeStyle='#555';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(sx-11,Y.y-20);ctx.lineTo(sx-4,Y.y-20);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sx+4,Y.y-20);ctx.lineTo(sx+11,Y.y-20);ctx.stroke();
+    // Squiggly mouth
+    ctx.strokeStyle='#c08070';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(sx-5,Y.y-10);
+    for(let i=0;i<10;i++)ctx.lineTo(sx-5+i*1.2,Y.y-10+(i%2===0?2:-2));
+    ctx.stroke();
+  } else {
+    // Red eyes
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(sx-7,Y.y-20,5.5,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sx+7,Y.y-20,5.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#cc2222';ctx.beginPath();ctx.arc(sx-7,Y.y-20,3.5,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sx+7,Y.y-20,3.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#8b0000';ctx.beginPath();ctx.arc(sx-6,Y.y-21,1.8,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sx+8,Y.y-21,1.8,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(sx-5,Y.y-22,0.9,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sx+9,Y.y-22,0.9,0,Math.PI*2);ctx.fill();
+    // Angry brows
+    ctx.strokeStyle='#111';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(sx-13,Y.y-29);ctx.lineTo(sx-3,Y.y-26);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sx+13,Y.y-29);ctx.lineTo(sx+3,Y.y-26);ctx.stroke();
+    // Angry mouth
+    ctx.strokeStyle='#c08070';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(sx-5,Y.y-10);ctx.quadraticCurveTo(sx,Y.y-14,sx+5,Y.y-10);ctx.stroke();
+    // Blush
+    ctx.fillStyle='rgba(255,100,100,0.3)';
+    ctx.beginPath();ctx.ellipse(sx-13,Y.y-16,5,3,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(sx+13,Y.y-16,5,3,0,0,Math.PI*2);ctx.fill();
+  }
+
+  // Vision cone
+  if(!P.hiding&&P.inCorridor&&!Y.sneezing&&!Y.dancing){
+    ctx.save();
+    ctx.beginPath();ctx.moveTo(sx,Y.y-15);
+    ctx.lineTo(sx+Y.dir*Y.visionR,Y.y-28);ctx.lineTo(sx+Y.dir*Y.visionR,Y.y+22);
+    ctx.closePath();ctx.fillStyle='rgba(255,50,50,0.08)';ctx.fill();
+    ctx.strokeStyle='rgba(255,80,80,0.18)';ctx.lineWidth=1;ctx.stroke();
+    ctx.restore();
+  }
+
+  // Name tag
+  ctx.fillStyle='rgba(0,0,0,0.55)';
+  ctx.fillRect(sx-20,Y.y-48,40,16);
+  ctx.fillStyle='#cc2222';ctx.font='bold 10px Nunito';ctx.textAlign='center';
+  ctx.fillText('YURI',sx,Y.y-36);
+
+  ctx.restore();
+}
+
+function drawLoid(){
+  const t=Date.now();
+  const moving=P.vx!==0;
+  const walk=moving?Math.sin(t*0.016)*11:0;
+  const sx=P.x-camX;
+  const flip=P.facingR?1:-1;
+
+  if(P.hiding){
+    // Hiding in box — just eyes peeking
+    const nb=boxes.find(b=>Math.abs(P.x-b.x)<65);
+    const bx=nb?(nb.x-camX):sx-26;const by=nb?nb.y:P.y+8;
+    drawBoxOnCtx(ctx,bx,by,54,50);
+    // Blonde hair peeking
+    ctx.fillStyle='#c8a850';ctx.beginPath();ctx.arc(bx+27,by+2,13,Math.PI,0);ctx.fill();
+    // Eyes
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(bx+21,by+7,4,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(bx+33,by+7,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#4a90d9';ctx.beginPath();ctx.arc(bx+22,by+7,2.5,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(bx+34,by+7,2.5,0,Math.PI*2);ctx.fill();
+    // Sweat drop
+    ctx.fillStyle='rgba(100,180,255,0.7)';
+    ctx.beginPath();ctx.arc(bx+44,by+4,4,0,Math.PI*2);ctx.fill();
+    return;
+  }
+
+  ctx.save();ctx.scale(flip,1);const lx=flip*sx;const ly=P.y;
+
+  // Shadow
+  ctx.fillStyle='rgba(0,0,0,0.2)';ctx.beginPath();ctx.ellipse(lx,ly+52,18,5,0,0,Math.PI*2);ctx.fill();
+
+  // Legs
+  ctx.fillStyle='#111';ctx.fillRect(lx-11,ly+20,10,24+walk);ctx.fillRect(lx+1,ly+20,10,24-walk);
+  ctx.fillStyle='#0a0a0a';ctx.beginPath();ctx.ellipse(lx-6,ly+46,9,4,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(lx+6,ly+46,9,4,0,0,Math.PI*2);ctx.fill();
+  // Body
+  ctx.fillStyle='#3d5a3e';ctx.fillRect(lx-17,ly-10,34,32);
+  ctx.fillStyle='#c8c8b0';ctx.fillRect(lx-9,ly-4,18,22);
+  // Arms
+  ctx.fillStyle='#3d5a3e';
+  ctx.save();ctx.translate(lx-19,ly);ctx.rotate(Math.sin(t*0.016)*0.38);ctx.fillRect(0,0,9,26);ctx.restore();
+  ctx.save();ctx.translate(lx+10,ly);ctx.rotate(-Math.sin(t*0.016)*0.38);ctx.fillRect(0,0,9,26);ctx.restore();
+  // Head
+  ctx.fillStyle='#f5d5b0';ctx.beginPath();ctx.ellipse(lx,ly-22,19,19,0,0,Math.PI*2);ctx.fill();
+  // Blonde hair
+  ctx.fillStyle='#c8a850';ctx.beginPath();ctx.arc(lx,ly-30,19,Math.PI,0);ctx.fill();
+  ctx.beginPath();ctx.arc(lx-14,ly-23,8,Math.PI*1.3,0);ctx.fill();
+  ctx.beginPath();ctx.arc(lx+14,ly-23,7,Math.PI,0.1);ctx.fill();
+  ctx.fillStyle='#d4b45a';ctx.save();ctx.translate(lx+4,ly-40);ctx.rotate(-0.3);
+  ctx.beginPath();ctx.ellipse(0,0,3.5,7,0,0,Math.PI*2);ctx.fill();ctx.restore();
+  // Eyes blue
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(lx-6,ly-22,5,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(lx+6,ly-22,5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#4a90d9';ctx.beginPath();ctx.arc(lx-5,ly-22,3.5,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(lx+7,ly-22,3.5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#1a3a6e';ctx.beginPath();ctx.arc(lx-4,ly-23,1.8,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(lx+8,ly-23,1.8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(lx-3,ly-24,0.9,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(lx+9,ly-24,0.9,0,Math.PI*2);ctx.fill();
+  // Eyebrows
+  ctx.strokeStyle='#a08030';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(lx-11,ly-30);ctx.lineTo(lx-2,ly-28);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lx+11,ly-30);ctx.lineTo(lx+2,ly-28);ctx.stroke();
+  // Mole
+  ctx.fillStyle='#c08070';ctx.beginPath();ctx.arc(lx-2,ly-16,1.5,0,Math.PI*2);ctx.fill();
+  // Earpiece
+  ctx.fillStyle='#888';ctx.beginPath();ctx.arc(lx-19,ly-22,3,0,Math.PI*2);ctx.fill();
+
+  ctx.restore();
+
+  // Speed lines when running
+  if(moving&&P.inCorridor){
+    ctx.save();ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1.5;
+    for(let i=0;i<4;i++){
+      const ly2=P.y-20+i*14;
+      const llen=20+Math.random()*15;
+      ctx.beginPath();
+      ctx.moveTo(sx-(P.facingR?llen:(-llen)),ly2);
+      ctx.lineTo(sx-(P.facingR?llen*1.8:(-llen*1.8)),ly2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function drawFlag(){
+  if(!showFlag) return;
+  flagWave+=0.1;
+  const ex=EXIT.x-camX;const fy=EXIT.y-80;
+  ctx.strokeStyle='#bbb';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(ex+EXIT.w/2,fy+80);ctx.lineTo(ex+EXIT.w/2,fy);ctx.stroke();
+  ctx.fillStyle='#2ecc71';ctx.beginPath();ctx.moveTo(ex+EXIT.w/2,fy);
+  for(let i=0;i<=50;i++)ctx.lineTo(ex+EXIT.w/2+i,fy+Math.sin(flagWave+i*0.18)*8);
+  for(let i=50;i>=0;i--)ctx.lineTo(ex+EXIT.w/2+i,fy+20+Math.sin(flagWave+i*0.18)*8);
+  ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.9)';ctx.font='14px Arial';ctx.textAlign='center';
+  ctx.fillText('✓',ex+EXIT.w/2+25,fy+15);
+}
+
+function drawParticles(){
+  particles=particles.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.life-=1;p.alpha=p.life/p.maxLife;
+    if(p.life<=0) return false;
+    ctx.save();ctx.globalAlpha=p.alpha;
+    ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+    ctx.restore();return true;
+  });
+}
+
+function spawnDustParticles(x,y){
+  for(let i=0;i<8;i++){
+    particles.push({x,y,vx:(Math.random()-0.5)*2.5,vy:-Math.random()*2-0.5,r:Math.random()*4+1,color:'#c8a050',life:30,maxLife:30,alpha:1});
+  }
+}
+
+function spawnCatchParticles(x,y){
+  for(let i=0;i<20;i++){
+    const a=Math.random()*Math.PI*2;const sp=Math.random()*4+1;
+    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:Math.random()*6+2,color:['#e94560','#ff6b6b','#fff'][Math.floor(Math.random()*3)],life:40,maxLife:40,alpha:1});
+  }
+}
+
+function drawMsg(){
+  if(msg.alpha<=0) return;
+  ctx.save();ctx.globalAlpha=Math.min(msg.alpha,1);
+  ctx.font='bold 14px Nunito';
+  const tw=ctx.measureText(msg.text).width+28;
+  const mx=W/2,my=H*0.07;
+  ctx.fillStyle='rgba(0,0,0,0.82)';ctx.fillRect(mx-tw/2,my-18,tw,30);
+  ctx.strokeStyle=msg.color;ctx.lineWidth=1.5;ctx.strokeRect(mx-tw/2,my-18,tw,30);
+  ctx.fillStyle=msg.color;ctx.textAlign='center';ctx.fillText(msg.text,mx,my+2);
+  ctx.restore();
+}
+
+function drawConfetti(){
+  confetti.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.rot+=p.rs;p.vy+=0.04;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+    ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);ctx.restore();
+  });
+  confetti=confetti.filter(p=>p.y<H+20);
+}
+
+function spawnConfetti(){
+  const cs=['#2ecc71','#f39c12','#e94560','#3498db','#9b59b6','#fff','#ffd700'];
+  for(let i=0;i<80;i++){
+    confetti.push({x:Math.random()*W,y:-10,vx:(Math.random()-0.5)*3,vy:Math.random()*3+1.5,r:Math.random()*10+4,c:cs[Math.floor(Math.random()*cs.length)],rot:Math.random()*Math.PI*2,rs:(Math.random()-0.5)*0.15});
+  }
+}
+
+// ============================================================
+// UPDATE
+// ============================================================
+function updatePlayer(dt){
+  if(phase!=='playing') return;
+  const left=(keys['a']||keys['arrowleft']||tLeft);
+  const right=(keys['d']||keys['arrowright']||tRight);
+  const hideK=(keys[' ']||keys['e']||tHide);
+  const peekK=(keys['p']||tPeek);
+
+  peekActive=peekK&&!P.inCorridor;
+
+  if(P.hiding){P.hideTimer-=dt;if(P.hideTimer<=0){P.hiding=false;showMsg('Loid sneaks out! 🏃',800,'#2ecc71');}return;}
+
+  P.vx=left?-P.speed:right?P.speed:0;
+  if(P.vx!==0) P.facingR=P.vx>0;
+
+  const newX=P.x+P.vx;
+
+  if(!P.inCorridor){
+    if(newX>DOOR.x-5&&P.vx>0){
+      if(!DOOR.open){DOOR.open=true;sndDoor();showMsg('🚪 Door creaks open! Sneak through!',2200,'#f39c12');setStatus('🏃 RUN!');}
+    }
+    if(newX>DOOR.x+DOOR.w-10&&DOOR.open){P.inCorridor=true;P.x=DOOR.x+DOOR.w+8;}
+    else{P.x=Math.max(10,newX);}
+  } else {
+    if(newX<DOOR.x+DOOR.w+5){P.x=DOOR.x+DOOR.w+5;}
+    else if(newX+P.w>=EXIT.x-5){triggerWin();}
+    else{P.x=newX;}
+
+    // Hide
+    if(hideK&&!P.hiding){
+      const nb=boxes.find(b=>Math.abs(P.x-b.x)<65);
+      if(nb){P.hiding=true;P.hideTimer=3200;sndHide();spawnDustParticles(P.x-camX,P.y);showMsg('📦 Hiding! Stay still...',3000,'#f39c12');}
+    }
+
+    // Footsteps
+    if(P.vx!==0){pStepT+=dt;if(pStepT>260){tone(160,0.07,'square',0.08);pStepT=0;}}
+  }
+
+  if(DOOR.open&&DOOR.prog<1) DOOR.prog=Math.min(1,DOOR.prog+0.022);
+
+  // Camera follows player (only in corridor)
+  if(P.inCorridor){
+    const targetCam=P.x-W*0.35;
+    camX+=(targetCam-camX)*0.08;
+    camX=Math.max(0,Math.min(worldW-W,camX));
+  }
+}
+
+function updateYuri(dt){
+  if(phase!=='playing') return;
+  if(Y.sneezing){Y.sneezeT-=dt;if(Y.sneezeT<=0){Y.sneezing=false;}return;}
+  if(Y.dancing){Y.danceT-=dt;if(Y.danceT<=0){Y.dancing=false;}return;}
+
+  Y.x+=Y.speed*Y.dir;
+  if(Y.x>Y.patR){Y.x=Y.patR;Y.dir=-1;}
+  if(Y.x<Y.patL){Y.x=Y.patL;Y.dir=1;}
+
+  stepT+=dt;if(stepT>300){sndStep();stepT=0;}
+
+  // Catch check
+  if(P.inCorridor&&!P.hiding){
+    const dx=Math.abs(Y.x-P.x);const dy=Math.abs(Y.y-P.y);
+    if(dx<52&&dy<65) triggerLose();
+
+    // Vision check
+    const inVision=(Y.dir===1&&P.x>Y.x&&P.x-Y.x<Y.visionR)||(Y.dir===-1&&P.x<Y.x&&Y.x-P.x<Y.visionR);
+    if(inVision&&dy<65){
+      // Yuri sees player! Speed up
+      Y.speed=3.5;
+      if(!msg.text.includes('spotted')) showMsg('😤 YURI SPOTTED YOU! RUN!!',1000,'#e94560');
+      // Particle alert
+      if(Math.random()<0.1) spawnCatchParticles(Y.x-camX,Y.y);
+    } else {
+      Y.speed=1.6;
+    }
+  }
+
+  // Funny scenario timer
+  if(P.inCorridor&&!funnyActive){
+    funnyTimer-=dt;
+    if(funnyTimer<=0) triggerFunny();
+  }
+}
+
+function triggerWin(){
+  if(phase!=='playing') return;
+  phase='won';sndWin();showFlag=true;spawnConfetti();
+  setStatus('✅ MISSION COMPLETE!');
+  showMsg('🎉 ESCAPED! MISSION COMPLETE!',3000,'#2ecc71');
+  winTimer=0;
+}
+
+function triggerLose(){
+  if(phase!=='playing') return;
+  phase='lost';sndCatch();spawnCatchParticles(P.x-camX,P.y);
+  const loses=[
+    {title:'CAUGHT!',sub:'Yuri: "I KNEW IT WAS YOU LOID!!" 😤'},
+    {title:'BUSTED!',sub:'Yuri does a victory dance... 💃😂'},
+    {title:'OOPS!',sub:'Loid trips on Yuri\'s donut... 🍩💥'},
+  ];
+  const l=loses[Math.floor(Math.random()*loses.length)];
+  setStatus('❌ CAUGHT!');
+  setTimeout(()=>{
+    document.getElementById('loseTitle').textContent=l.title;
+    document.getElementById('loseSub').textContent=l.sub;
+    showScreen('loseScreen');running=false;
+  },1800);
+}
+
+// ============================================================
+// GAME LOOP
+// ============================================================
+let lastT=0;
+function gameLoop(ts=0){
+  const dt=ts-lastT;lastT=ts;
+  ctx.clearRect(0,0,W,H);
+
+  drawBG();
+  drawBoxes();
+
+  updateYuri(dt);
+  updatePlayer(dt);
+
+  drawYuri();
+  drawExitDoor();
+  drawDoor();
+  drawFisheyeLens();
+  drawLoid();
+  drawFlag();
+  drawParticles();
+  drawConfetti();
+
+  // HUD
+  if(!P.inCorridor&&!DOOR.open){
+    ctx.fillStyle='rgba(0,0,0,0.65)';
+    const hint=peekActive?'Looking through lens...':'Press P or PEEK to spy on Yuri 👁';
+    ctx.font='bold 11px Nunito';const hw=ctx.measureText(hint).width+18;
+    ctx.fillRect(DOOR.x+DOOR.w/2-hw/2,DOOR.y+DOOR.h*0.33+35,hw,19);
+    ctx.fillStyle=peekActive?'#7ecfff':'#f39c12';ctx.textAlign='center';
+    ctx.fillText(hint,DOOR.x+DOOR.w/2,DOOR.y+DOOR.h*0.33+48);
+  }
+
+  // Progress bar (distance to exit)
+  if(P.inCorridor){
+    const corrLen=EXIT.x-(DOOR.x+DOOR.w);
+    const prog=(P.x-(DOOR.x+DOOR.w))/corrLen;
+    ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(W*0.1,12,W*0.8,10);
+    const barGrad=ctx.createLinearGradient(W*0.1,0,W*0.9,0);
+    barGrad.addColorStop(0,'#e94560');barGrad.addColorStop(0.5,'#f39c12');barGrad.addColorStop(1,'#2ecc71');
+    ctx.fillStyle=barGrad;ctx.fillRect(W*0.1,12,W*0.8*Math.min(prog,1),10);
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.strokeRect(W*0.1,12,W*0.8,10);
+    ctx.fillStyle='#fff';ctx.font='bold 9px Nunito';ctx.textAlign='center';
+    ctx.fillText('EXIT →',W*0.9+20,21);
+    ctx.fillText('← START',W*0.1-20,21);
+  }
+
+  // Msg
+  if(msg.alpha>0){msg.timer-=dt;if(msg.timer<400)msg.alpha=Math.max(0,msg.alpha-0.007*dt/16);drawMsg();}
+
+  // Win timer
+  if(phase==='won'){winTimer+=dt;if(winTimer>3200){showScreen('winScreen');running=false;createWinParticles();}}
+
+  if(running) rafId=requestAnimationFrame(gameLoop);
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+document.addEventListener('keydown',e=>{
+  keys[e.key.toLowerCase()]=true;
+  if(['arrowleft','arrowright',' '].includes(e.key.toLowerCase())) e.preventDefault();
+});
+document.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
+
+function setupBtn(id,setter,sound){
+  const el=document.getElementById(id);if(!el) return;
+  const on=()=>{setter(true);el.classList.add('pressed');if(sound)sound();};
+  const off=()=>{setter(false);el.classList.remove('pressed');};
+  el.addEventListener('pointerdown',e=>{on();e.preventDefault();});
+  el.addEventListener('pointerup',e=>{off();e.preventDefault();});
+  el.addEventListener('pointerleave',off);
+  el.addEventListener('touchstart',e=>{on();e.preventDefault();},{passive:false});
+  el.addEventListener('touchend',e=>{off();e.preventDefault();},{passive:false});
+}
+setupBtn('btnLeft',v=>{tLeft=v;},sndClick);
+setupBtn('btnRight',v=>{tRight=v;},sndClick);
+setupBtn('btnPeek',v=>{tPeek=v;},v=>v&&sndPeek());
+setupBtn('btnHide',v=>{tHide=v;},sndClick);
+
+// ============================================================
+// SCREEN MANAGEMENT
+// ============================================================
+function startGame(){
+  sndClick();showScreen('gameScreen');
+  if(rafId) cancelAnimationFrame(rafId);
+  initGame();
+  document.getElementById('onScreenBtns').style.display='flex';
+  rafId=requestAnimationFrame(gameLoop);
+}
+function exitToIntro(){
+  sndClick();showScreen('introScreen');
+  running=false;if(rafId) cancelAnimationFrame(rafId);
+  document.getElementById('onScreenBtns').style.display='none';
+  setStatus('READY');
+}
+function createWinParticles(){
+  const cs=['#2ecc71','#f39c12','#e94560','#3498db','#9b59b6'];
+  const ws=document.getElementById('winScreen');
+  for(let i=0;i<35;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');p.className='particle';
+      const sz=Math.random()*14+5;
+      p.style.cssText=`left:${Math.random()*100}%;top:-20px;width:${sz}px;height:${sz}px;background:${cs[Math.floor(Math.random()*cs.length)]};border-radius:50%;animation:fall ${Math.random()*2+2}s linear forwards;animation-delay:${Math.random()*0.4}s`;
+      ws.appendChild(p);setTimeout(()=>p.remove(),4500);
+    },i*70);
+  }
+}
+
+// Initially hide game buttons
+document.getElementById('onScreenBtns').style.display='none';
+window.addEventListener('resize',()=>{if(running){initGame();}});
+setStatus('READY');
+</script>
+</body>
+</html>
